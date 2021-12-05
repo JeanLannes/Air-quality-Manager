@@ -5,6 +5,20 @@ public class AirQualityManager{
 
 	public static ArrayList<String> importSensors() throws IOException
 	{
+		String line;
+		ArrayList<String> capteursData = new ArrayList<String>();
+		try {
+			FileReader capteursReader = new FileReader("capteurs.csv");
+			BufferedReader capteurs = new BufferedReader(capteursReader);
+			while((line=capteurs.readLine()) != null) {
+				capteursData.add(line);
+			}
+			capteursReader = new FileReader("capteurs.csv");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}		
+		return capteursData;
+	}
 
 	public static ArrayList<String> importValues() throws IOException
 	{
@@ -58,4 +72,3 @@ public class AirQualityManager{
 
 	}
 }
-
