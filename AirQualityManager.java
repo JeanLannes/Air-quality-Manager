@@ -1,6 +1,11 @@
 import java.io.*;
 import java.util.*;
 
+/**
+ * Air quality management class 
+ * @author Tom Durand
+ * @version 0.2.1
+ */
 public class AirQualityManager{
 
 	public static ArrayList<String> importSensors() throws IOException
@@ -42,14 +47,17 @@ public class AirQualityManager{
 		int choice, cond=0;
 		int sensorCriticalRate;
 		Scanner readKeyboard = new Scanner(System.in);
-		
+
+		//Allows to import files into 2 ArrayList
 		ArrayList<String> listOfSensorsData = new ArrayList<String>();
 		listOfSensorsData = importSensors();
 		ArrayList<String> listOfValuesData = new ArrayList<String>();
 		listOfValuesData = importValues();
 
+		//Creates another ArrayList which is a list of the sensors objects
 		ArrayList<Sensors> listOfSensorsObjects = new ArrayList<Sensors>();
 
+		//Splits the information about the Sensors into a temporary tab, & creates Sensor objects in listOfSensorsObjects
 		for (int i=0;i<listOfSensorsData.size();i++) {
 			String[] tempTab = listOfSensorsData.get(i).split(";");
 			listOfSensorsObjects.add(new Sensors(tempTab[0], tempTab[1], tempTab[2], tempTab[3]));
@@ -58,14 +66,16 @@ public class AirQualityManager{
 		for (int i=0;i<listOfValuesData.size();i++) {
 			String[] tempTab = listOfValuesData.get(i).split(";");
 			for (int j=0;j<listOfSensorsObjects.size();j++) {
-				
+				if (listOfSensorsObjects.get(j).getCode().equals(tempTab[0])) {
 					listOfSensorsObjects.get(j).addValues(tempTab[1], tempTab[2], tempTab[3], tempTab[5]);
+				}
 			}
 		}
-
+		
+		System.out.println(listOfSensorsObjects.get(0).getCode());
+		listOfSensorsObjects.get(0).check();
 
 		do{
-
 			System.out.println("******** Which sensor do you want to access? ********\n  1- " + listOfSensorsObjects.get(0).getCode() + "\n  2- " + listOfSensorsObjects.get(1).getCode() + "\n  3- " + listOfSensorsObjects.get(2).getCode() + "\n  4- " + listOfSensorsObjects.get(3).getCode() + "\n  5- " + listOfSensorsObjects.get(4).getCode() + "\n*****************************************************");
 			choice=readKeyboard.nextInt();	
 			if (choice>=1 && choice<=5) {
@@ -76,8 +86,8 @@ public class AirQualityManager{
 				sensorCriticalRate = readKeyboard.nextInt();
 				System.out.println("Critical level : " + sensorCriticalRate);
 				String[] tab = Sensors.ValueSortMax(sensorCriticalRate);
-
-				 try {
+				
+				try {
 				      FileWriter fw = new FileWriter("CriticalData.txt");
 				      for (int i=0;i<tab.length;i++) {
 				      		fw.write(tab[i]);
@@ -88,8 +98,6 @@ public class AirQualityManager{
 				      e.printStackTrace();
 				}
 			}
-
 		} while(cond==0);
 	}
 }
-
