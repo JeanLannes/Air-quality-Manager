@@ -37,38 +37,59 @@ public class AirQualityManager{
 		return valeursData;
 	}
 
-	public class exportData{
-
-		
-	}
-
 	public static void main(String[] args) throws IOException {
 
 		int choice, cond=0;
-		Scanner readKeyboard = new Scanner(System.in);	
-		ArrayList<String> listOfSensors = new ArrayList<String>();
-		listOfSensors = importSensors();
-		ArrayList<String> listOfValues = new ArrayList<String>();
-		listOfValues = importValues();
+		int sensorCriticalRate;
+		Scanner readKeyboard = new Scanner(System.in);
+		
+		ArrayList<String> listOfSensorsData = new ArrayList<String>();
+		listOfSensorsData = importSensors();
+		ArrayList<String> listOfValuesData = new ArrayList<String>();
+		listOfValuesData = importValues();
+
+		ArrayList<Sensors> listOfSensorsObjects = new ArrayList<Sensors>();
+
+		for (int i=0;i<listOfSensorsData.size();i++) {
+			String[] tempTab = listOfSensorsData.get(i).split(";");
+			listOfSensorsObjects.add(new Sensors(tempTab[0], tempTab[1], tempTab[2], tempTab[3]));
+		}
+
+		for (int i=0;i<listOfValuesData.size();i++) {
+			String[] tempTab = listOfValuesData.get(i).split(";");
+			for (int j=0;j<listOfSensorsObjects.size();j++) {
+				
+					listOfSensorsObjects.get(j).addValues(tempTab[1], tempTab[2], tempTab[3], tempTab[5]);
+			}
+		}
 
 
 		do{
-			System.out.println("******** MENU ********\n  1- \n  2-  \n  3- \n  4- \n  5- \n  6- \n  10- Quitter\n**********************");
-			choice=readKeyboard.nextInt();	
-			switch(choice){
-				case 1: System.out.println(listOfSensors.get(1));
-						System.out.println(listOfSensors.get(2));
-						System.out.println(listOfValues.get(1));
-						System.out.println(listOfValues.get(2));
-						break;
-				case 2:
-						break;
-				case 10:System.out.println("\n * AU REVOIR *\n");
-						cond++;
-						break;
-				default:System.out.println("\n * VALEUR INCORRECTE *\n");
-			}
-		} while(cond==0);
 
+			System.out.println("******** Which sensor do you want to access? ********\n  1- " + listOfSensorsObjects.get(0).getCode() + "\n  2- " + listOfSensorsObjects.get(1).getCode() + "\n  3- " + listOfSensorsObjects.get(2).getCode() + "\n  4- " + listOfSensorsObjects.get(3).getCode() + "\n  5- " + listOfSensorsObjects.get(4).getCode() + "\n*****************************************************");
+			choice=readKeyboard.nextInt();	
+			if (choice>=1 && choice<=5) {
+				cond++;
+				choice--;
+
+				System.out.println("Please enter the critical level.\n");
+				sensorCriticalRate = readKeyboard.nextInt();
+				System.out.println("Critical level : " + sensorCriticalRate);
+				String[] tab = Sensors.ValueSortMax(sensorCriticalRate);
+
+				 try {
+				      FileWriter fw = new FileWriter("CriticalData.txt");
+				      for (int i=0;i<tab.length;i++) {
+				      		fw.write(tab[i]);
+				      }
+				      fw.close();
+				      System.out.println("Success.");
+				} catch (IOException e) {
+				      e.printStackTrace();
+				}
+			}
+
+		} while(cond==0);
 	}
 }
+
